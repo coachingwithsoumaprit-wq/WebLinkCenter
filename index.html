@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -31,40 +31,22 @@
             100% { background-position: 60px 0; }
         }
 
-        /* Store Icon Button Design */
-        .store-logo-link {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            width: 45px;
-            height: 45px;
-            background-color: rgba(255, 255, 255, 0.1);
-            color: #ffffff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            text-decoration: none;
-            font-size: 18px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(5px);
-            -webkit-backdrop-filter: blur(5px);
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-            transition: transform 0.3s ease, background-color 0.3s;
-            z-index: 100;
+        /* --- Public UI Styles --- */
+        .admin-toggle-link {
+            position: absolute; top: 20px; right: 20px; width: 45px; height: 45px;
+            background-color: rgba(255, 255, 255, 0.1); color: #ffffff; display: flex;
+            align-items: center; justify-content: center; border-radius: 50%;
+            font-size: 18px; border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(5px); box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease; z-index: 100; cursor: pointer;
         }
-
-        .store-logo-link:hover {
-            transform: scale(1.1) rotate(5deg);
-            background-color: rgba(255, 255, 255, 0.25);
-        }
+        .admin-toggle-link:hover { transform: scale(1.1) rotate(5deg); background-color: rgba(255, 255, 255, 0.25); }
 
         .container { width: 100%; max-width: 480px; text-align: center; margin-top: 20px; }
-
         .profile-img { width: 110px; height: 110px; border-radius: 50%; object-fit: cover; border: 3px solid rgba(255, 255, 255, 0.2); box-shadow: 0 0 15px rgba(255, 255, 255, 0.1); }
         .name { font-size: 22px; font-weight: 700; margin: 15px 0 5px 0; }
         .bio { font-size: 15px; color: #b3b3b3; margin-bottom: 25px; }
-
+        
         .social-icons { display: flex; justify-content: center; gap: 18px; margin-bottom: 30px; }
         .social-icons a { font-size: 28px; text-decoration: none; transition: transform 0.2s; }
         .social-icons a:hover { transform: scale(1.2); }
@@ -74,122 +56,102 @@
         .icon-yt { color: #FF0000; }
         .icon-tg { color: #229ED9; }
 
-        /* 2-Column Grid for Mobile */
-        .links-container { 
-            display: grid; 
-            grid-template-columns: repeat(2, 1fr); 
-            gap: 12px; 
-            width: 100%; 
-        }
+        .links-container { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; width: 100%; }
 
-        /* Product Card Layout */
         .product-wrapper {
-            background-color: rgba(255, 255, 255, 0.06);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border-radius: 12px;
-            padding: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            transition: transform 0.3s ease, background-color 0.3s ease;
+            background-color: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px); border-radius: 12px; padding: 8px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            display: flex; flex-direction: column; justify-content: space-between; position: relative;
+            transition: transform 0.3s ease;
         }
-
-        .product-wrapper:hover {
-            transform: translateY(-3px);
-            background-color: rgba(255, 255, 255, 0.12);
+        .product-wrapper:hover { transform: translateY(-3px); background-color: rgba(255, 255, 255, 0.12); }
+        .product-image-container { width: 100%; border-radius: 8px; overflow: hidden; cursor: pointer; position: relative; }
+        .product-image-container img { width: 100%; height: 120px; object-fit: cover; display: block; }
+        
+        .price-badge {
+            position: absolute; top: 6px; left: 6px; background-color: rgba(0, 0, 0, 0.75); color: #25D366;
+            font-size: 11px; font-weight: bold; padding: 3px 8px; border-radius: 4px; border: 1px solid rgba(255, 255, 255, 0.1);
         }
+        .price-badge.paid-tag { color: #ffb627; }
 
-        /* Image Container */
-        .product-image-container {
-            width: 100%;
-            border-radius: 8px;
-            overflow: hidden;
-            cursor: pointer;
-        }
+        .product-info { text-align: left; padding: 8px 2px 6px 2px; }
+        .product-name { font-size: 14px; font-weight: 600; color: #ffffff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-        .product-image-container img {
-            width: 100%;
-            height: 120px; /* মোবাইল স্ক্রিনে পাশাপাশি ফিট হওয়ার জন্য উচ্চতা কমানো হয়েছে */
-            object-fit: cover;
-            display: block;
-        }
-
-        /* Product Name */
-        .product-info {
-            text-align: left;
-            padding: 8px 2px 6px 2px;
-        }
-
-        .product-name {
-            font-size: 14px;
-            font-weight: 600;
-            color: #ffffff;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis; /* নাম বেশি বড় হলে ডট ডট (...) দেখাবে */
-        }
-
-        /* Action Footer */
-        .product-actions {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            padding-top: 8px;
-        }
-
-        /* Buttons Row */
-        .action-buttons-left {
-            display: flex;
-            justify-content: space-between;
-            gap: 5px;
-        }
-
-        .action-btn {
-            background-color: rgba(255, 255, 255, 0.08);
-            color: #fff;
-            padding: 6px 0;
-            flex: 1;
-            border-radius: 6px;
-            font-size: 12px;
-            text-decoration: none;
-            cursor: pointer;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 4px;
-            transition: background-color 0.2s;
-        }
-
-        .action-btn.share-btn { background-color: #1877F2; border: none; }
-        .action-btn.share-btn:hover { background-color: #166fe5; }
+        .product-actions { display: flex; flex-direction: column; gap: 8px; border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 8px; }
+        .create-btn { width: 100%; padding: 8px 0; background-color: #1877F2; color: #fff; border: none; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer; text-align: center; text-decoration: none; display: inline-block; }
+        .create-btn:hover { background-color: #115ec9; }
+        .action-buttons-left { display: flex; justify-content: space-between; align-items: center; gap: 5px; }
+        .action-btn { background-color: rgba(255, 255, 255, 0.08); color: #fff; padding: 6px 0; flex: 1; border-radius: 6px; font-size: 12px; border: 1px solid rgba(255, 255, 255, 0.05); display: flex; align-items: center; justify-content: center; gap: 4px; cursor: pointer; }
+        .action-btn.share-btn { background-color: rgba(255, 255, 255, 0.15); }
         .action-btn.like-btn i { color: #ff4d4d; }
-        .action-btn:hover:not(.share-btn) { background-color: rgba(255, 255, 255, 0.2); }
+        .action-btn:hover { background-color: rgba(255, 255, 255, 0.2); }
+        .view-count { font-size: 11px; color: #aaaaaa; display: flex; align-items: center; justify-content: flex-end; gap: 4px; padding-right: 2px; }
 
-        /* Small View Count Right-Aligned at Bottom */
-        .view-count {
-            font-size: 11px;
-            color: #aaaaaa;
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
-            gap: 4px;
-            padding-right: 2px;
+
+        /* --- Admin System Styles --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(8px);
+            display: none; align-items: center; justify-content: center; z-index: 999;
         }
+
+        /* Login Box */
+        .login-box {
+            background: #1e1e1e; padding: 25px; border-radius: 12px; width: 90%; max-width: 350px;
+            text-align: center; border: 1px solid rgba(255, 255, 255, 0.2); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); position: relative;
+        }
+        .login-box h3 { margin-top: 0; margin-bottom: 20px; color: #fff; }
+        .login-box input { width: 100%; padding: 10px; margin-bottom: 15px; border-radius: 6px; border: 1px solid rgba(255, 255, 255, 0.2); background: #111; color: #fff; text-align: center; font-size: 16px; letter-spacing: 2px; }
+        .login-box button { width: 100%; padding: 10px; background-color: #1877F2; color: white; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; }
+        .close-modal { position: absolute; top: 10px; right: 15px; color: #aaa; font-size: 20px; cursor: pointer; }
+
+        /* Admin Dashboard (Full Overlay) */
+        .admin-dashboard-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #111; z-index: 1000; overflow-y: auto;
+            display: none; flex-direction: column; align-items: center; padding: 20px 10px;
+        }
+        .admin-container { width: 100%; max-width: 600px; }
+        
+        .admin-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; padding-bottom: 15px; margin-bottom: 20px; }
+        .admin-header h2 { margin: 0; color: #fff; font-size: 20px; }
+        .close-admin-btn { background: #e74c3c; color: white; border: none; padding: 6px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        
+        .admin-tabs { display: flex; gap: 10px; margin-bottom: 20px; }
+        .admin-tab { flex: 1; padding: 10px; background: #222; color: #ccc; border: 1px solid #333; border-radius: 6px; cursor: pointer; font-weight: bold; transition: 0.3s; }
+        .admin-tab.active { background: #1877F2; color: #fff; border-color: #1877F2; }
+        
+        .tab-content { display: none; background: #1a1a1a; padding: 20px; border-radius: 8px; border: 1px solid #333; }
+        .tab-content.active { display: block; }
+
+        /* Form inside Admin */
+        .form-group { margin-bottom: 12px; display: flex; flex-direction: column; }
+        .form-group label { font-size: 13px; color: #aaa; margin-bottom: 4px; }
+        .form-group input, .form-group select { padding: 10px; border-radius: 6px; border: 1px solid #444; background: #000; color: #fff; font-size: 14px; }
+        .admin-btn-submit { background-color: #25D366; color: white; border: none; padding: 12px; border-radius: 6px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 10px; }
+        
+        /* Product List inside Admin */
+        .admin-list-item { 
+            display: flex; align-items: center; justify-content: space-between; 
+            background: #222; padding: 10px; border-radius: 8px; margin-bottom: 10px; border: 1px solid #333; 
+        }
+        .admin-list-item-left { display: flex; align-items: center; gap: 12px; overflow: hidden; }
+        .admin-list-item img { width: 50px; height: 50px; border-radius: 6px; object-fit: cover; }
+        .admin-list-name { font-size: 14px; font-weight: 600; color: #fff; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; max-width: 150px; }
+        .admin-list-actions { display: flex; gap: 6px; }
+        .adm-btn { padding: 6px 12px; border: none; border-radius: 4px; font-size: 12px; font-weight: bold; cursor: pointer; color: white; }
+        .adm-btn-edit { background: #f39c12; }
+        .adm-btn-del { background: #e74c3c; }
+
     </style>
 </head>
 <body>
 
-    <!-- Store Icon Link (Same Tab) -->
-    <a href="https://all-product-438q.vercel.app/" class="store-logo-link" title="Visit My Store">
-        <i class="fas fa-store"></i>
-    </a>
+    <div class="admin-toggle-link" onclick="openLoginModal()" title="Admin Login">
+        <i class="fas fa-lock" id="lock-icon"></i>
+    </div>
 
-    <div class="container">
+    <div class="container" id="public-main-view">
         <div class="profile-container">
             <img src="me.png" alt="Profile" class="profile-img">
         </div>
@@ -205,14 +167,77 @@
             <a href="https://t.me/+w0RrVtFXZA45ZTM1" class="icon-tg" target="_blank"><i class="fab fa-telegram"></i></a>
         </div>
 
-        <div class="links-container" id="links-container">
+        <div class="links-container" id="public-links-container">
             <p style="color: #ccc; font-size: 14px; grid-column: span 2;">Loading products...</p>
         </div>
     </div>
 
+
+    <div class="modal-overlay" id="login-modal">
+        <div class="login-box">
+            <span class="close-modal" onclick="closeLoginModal()">&times;</span>
+            <h3>Admin Login</h3>
+            <input type="password" id="admin-password" placeholder="Enter Password">
+            <button onclick="verifyPassword()">Access Dashboard</button>
+        </div>
+    </div>
+
+    <div class="admin-dashboard-overlay" id="admin-dashboard">
+        <div class="admin-container">
+            
+            <div class="admin-header">
+                <h2>Admin Control Panel</h2>
+                <button class="close-admin-btn" onclick="logoutAdmin()">Logout / Close</button>
+            </div>
+
+            <div class="admin-tabs">
+                <button class="admin-tab active" id="tab-btn-add" onclick="switchTab('add')">Add/Edit Product</button>
+                <button class="admin-tab" id="tab-btn-list" onclick="switchTab('list')">Manage Products</button>
+            </div>
+
+            <div class="tab-content active" id="tab-add">
+                <h3 id="form-title" style="margin-top: 0; color: #fff;">Add New Product</h3>
+                <input type="hidden" id="product-id">
+                
+                <div class="form-group">
+                    <label>Image URL</label>
+                    <input type="text" id="prod-image" placeholder="Paste image link here" required>
+                </div>
+                <div class="form-group">
+                    <label>Product Name</label>
+                    <input type="text" id="prod-name" placeholder="Enter product name" required>
+                </div>
+                <div class="form-group">
+                    <label>Product Type</label>
+                    <select id="prod-type" onchange="handleTypeChange()">
+                        <option value="free">Free</option>
+                        <option value="paid">Paid</option>
+                    </select>
+                </div>
+                <div class="form-group" id="price-group" style="display: none;">
+                    <label>Price (e.g. ₹99)</label>
+                    <input type="text" id="prod-price" placeholder="Enter amount">
+                </div>
+                <div class="form-group">
+                    <label>View Link (Redirect URL)</label>
+                    <input type="text" id="prod-link" placeholder="Enter product link" required>
+                </div>
+                <button class="admin-btn-submit" onclick="saveProduct()">Save Product</button>
+            </div>
+
+            <div class="tab-content" id="tab-list">
+                <div id="admin-product-list">
+                    <p style="color: #ccc;">Loading products...</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-        import { getFirestore, collection, onSnapshot, doc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+        import { getFirestore, collection, onSnapshot, doc, addDoc, updateDoc, deleteDoc, increment } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyD-FPX1xPTQ8NTER4nFJH0jSTRmRB_K0FE",
@@ -225,39 +250,51 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
-        const container = document.getElementById('links-container');
+        
+        const publicContainer = document.getElementById('public-links-container');
+        const adminListContainer = document.getElementById('admin-product-list');
 
+        const ADMIN_PASSWORD = "admin"; // <--- পাসওয়ার্ড এখানে
+        let isAdminLoggedIn = false;
+
+        // Fetch & Show Products (Both Public & Admin Views)
         onSnapshot(collection(db, "products"), (snapshot) => {
-            container.innerHTML = ""; 
+            publicContainer.innerHTML = ""; 
+            adminListContainer.innerHTML = ""; 
             
+            if (snapshot.empty) {
+                adminListContainer.innerHTML = "<p style='color: #aaa;'>No products found.</p>";
+            }
+
             snapshot.forEach((documentSnapshot) => {
                 const data = documentSnapshot.data();
                 const docId = documentSnapshot.id;
                 
-                container.innerHTML += `
+                const isPaid = data.type === 'paid';
+                const tagClass = isPaid ? 'price-badge paid-tag' : 'price-badge';
+                const tagLabel = isPaid ? (data.price || 'Paid') : 'Free';
+
+                // ================= PUBLIC GRID CARD =================
+                publicContainer.innerHTML += `
                 <div class="product-wrapper">
-                    
-                    <!-- Product Image -->
                     <div class="product-image-container" onclick="viewProduct('${docId}', '${data.openLink || '#'}')">
-                        <img src="${data.image || 'https://via.placeholder.com/200x120'}" alt="Product Image">
+                        <span class="${tagClass}">${tagLabel}</span>
+                        <img src="${data.image || 'https://via.placeholder.com/200x120'}" alt="Product">
                     </div>
                     
-                    <!-- Product Info -->
                     <div class="product-info">
                         <div class="product-name" title="${data.name || 'No Name'}">${data.name || 'No Name'}</div>
                     </div>
                     
-                    <!-- Actions Footer -->
                     <div class="product-actions">
+                        <a href="${data.openLink || '#'}" target="_blank" onclick="trackView('${docId}')" class="create-btn">
+                            Create Yours
+                        </a>
+
                         <div class="action-buttons-left">
                             <button class="action-btn share-btn" onclick="shareProduct('${data.name}', '${data.openLink}')" title="Share">
                                 <i class="fas fa-share"></i>
                             </button>
-                            
-                            <a href="${data.downloadLink || '#'}" class="action-btn" target="_blank" title="Download">
-                                <i class="fas fa-download"></i>
-                            </a>
-                            
                             <button class="action-btn like-btn" onclick="likeProduct('${docId}')" title="Like">
                                 <i class="fas fa-heart"></i> <span>${data.likes || 0}</span>
                             </button>
@@ -267,13 +304,172 @@
                             <i class="fas fa-eye"></i> ${data.views || 0}
                         </div>
                     </div>
-                    
+                </div>`;
+
+                // ================= ADMIN LIST ITEM =================
+                // Using template literal properly inside JS for the edit function parameters
+                const safeName = (data.name || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+                const safeImg = (data.image || '').replace(/'/g, "\\'");
+                const safeLink = (data.openLink || '').replace(/'/g, "\\'");
+                const safeType = data.type || 'free';
+                const safePrice = (data.price || '').replace(/'/g, "\\'");
+
+                adminListContainer.innerHTML += `
+                <div class="admin-list-item">
+                    <div class="admin-list-item-left">
+                        <img src="${data.image || 'https://via.placeholder.com/50'}" alt="Img">
+                        <span class="admin-list-name" title="${data.name}">${data.name || 'No Name'}</span>
+                    </div>
+                    <div class="admin-list-actions">
+                        <button class="adm-btn adm-btn-edit" onclick="editProduct('${docId}', '${safeName}', '${safeImg}', '${safeLink}', '${safeType}', '${safePrice}')">Edit</button>
+                        <button class="adm-btn adm-btn-del" onclick="deleteProduct('${docId}')">Delete</button>
+                    </div>
                 </div>`;
             });
         });
 
+        // --- Admin Authentication & Dashboard Toggle ---
+        window.openLoginModal = () => {
+            if (isAdminLoggedIn) {
+                document.getElementById('admin-dashboard').style.display = 'flex';
+            } else {
+                document.getElementById('login-modal').style.display = 'flex';
+                document.getElementById('admin-password').value = '';
+                document.getElementById('admin-password').focus();
+            }
+        };
+
+        window.closeLoginModal = () => {
+            document.getElementById('login-modal').style.display = 'none';
+        };
+
+        window.verifyPassword = () => {
+            const pass = document.getElementById('admin-password').value;
+            if (pass === ADMIN_PASSWORD) {
+                isAdminLoggedIn = true;
+                document.getElementById('lock-icon').className = "fas fa-lock-open";
+                closeLoginModal();
+                document.getElementById('admin-dashboard').style.display = 'flex';
+                switchTab('list'); // Open Product List by default upon login
+            } else {
+                alert("Incorrect Password!");
+            }
+        };
+
+        document.getElementById('admin-password').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') window.verifyPassword();
+        });
+
+        window.logoutAdmin = () => {
+            document.getElementById('admin-dashboard').style.display = 'none';
+            resetForm();
+            // isAdminLoggedIn = false; // Uncomment if you want them to type password again every time they close
+        };
+
+        // --- Dashboard Tabs Logic ---
+        window.switchTab = (tabId) => {
+            document.getElementById('tab-add').classList.remove('active');
+            document.getElementById('tab-list').classList.remove('active');
+            document.getElementById('tab-btn-add').classList.remove('active');
+            document.getElementById('tab-btn-list').classList.remove('active');
+
+            if (tabId === 'add') {
+                document.getElementById('tab-add').classList.add('active');
+                document.getElementById('tab-btn-add').classList.add('active');
+            } else {
+                document.getElementById('tab-list').classList.add('active');
+                document.getElementById('tab-btn-list').classList.add('active');
+            }
+        };
+
+        // --- Add/Edit Form Logic ---
+        window.handleTypeChange = () => {
+            const type = document.getElementById('prod-type').value;
+            document.getElementById('price-group').style.display = (type === 'paid') ? 'flex' : 'none';
+        };
+
+        window.saveProduct = async () => {
+            if (!isAdminLoggedIn) return;
+
+            const id = document.getElementById('product-id').value;
+            const image = document.getElementById('prod-image').value;
+            const name = document.getElementById('prod-name').value;
+            const type = document.getElementById('prod-type').value;
+            const price = document.getElementById('prod-price').value;
+            const openLink = document.getElementById('prod-link').value;
+            
+            if(!name || !image || !openLink) {
+                alert("Image URL, Name, and View Link are mandatory!");
+                return;
+            }
+
+            const productData = {
+                image: image, name: name, type: type, openLink: openLink,
+                price: type === 'paid' ? price : ''
+            };
+
+            try {
+                if(id) {
+                    await updateDoc(doc(db, "products", id), productData);
+                    alert("Product updated!");
+                } else {
+                    productData.views = 0;
+                    productData.likes = 0;
+                    await addDoc(collection(db, "products"), productData);
+                    alert("New product added!");
+                }
+                resetForm();
+                switchTab('list'); // Take them back to list view to see the result
+            } catch (e) {
+                alert("Error: " + e.message);
+            }
+        };
+
+        window.editProduct = (id, name, image, openLink, type, price) => {
+            if (!isAdminLoggedIn) return;
+            switchTab('add'); // Go to Add/Edit tab
+            
+            document.getElementById('form-title').innerText = "Edit Product";
+            document.getElementById('product-id').value = id;
+            document.getElementById('prod-image').value = image;
+            // Decode HTML entities if quotes were saved
+            const textarea = document.createElement("textarea");
+            textarea.innerHTML = name;
+            document.getElementById('prod-name').value = textarea.value;
+            
+            document.getElementById('prod-type').value = type || 'free';
+            document.getElementById('prod-price').value = price || '';
+            document.getElementById('prod-link').value = openLink;
+            handleTypeChange();
+        };
+
+        window.deleteProduct = async (id) => {
+            if (!isAdminLoggedIn) return;
+            if(confirm("Are you sure you want to delete this product? This cannot be undone.")) {
+                try {
+                    await deleteDoc(doc(db, "products", id));
+                } catch(e) { alert("Error deleting: " + e.message); }
+            }
+        };
+
+        function resetForm() {
+            document.getElementById('form-title').innerText = "Add New Product";
+            document.getElementById('product-id').value = "";
+            document.getElementById('prod-image').value = "";
+            document.getElementById('prod-name').value = "";
+            document.getElementById('prod-type').value = "free";
+            document.getElementById('prod-price').value = "";
+            document.getElementById('prod-link').value = "";
+            handleTypeChange();
+        }
+
+        // --- Public Interaction Logic ---
         window.viewProduct = async (id, url) => {
             if(url && url !== '#') { window.open(url, '_blank'); }
+            await trackView(id);
+        };
+
+        window.trackView = async (id) => {
             try { await updateDoc(doc(db, "products", id), { views: increment(1) }); } catch (e) {}
         };
 
@@ -286,7 +482,7 @@
             if (navigator.share) {
                 navigator.share({ title: title, text: 'Check this out!', url: shareUrl }).catch(e => {});
             } else {
-                navigator.clipboard.writeText(shareUrl).then(() => alert("The link has been copied!"));
+                navigator.clipboard.writeText(shareUrl).then(() => alert("Link copied to clipboard!"));
             }
         };
     </script>
