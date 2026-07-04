@@ -6,6 +6,7 @@
     <link rel="icon" href="me.png" type="image/png">
     <title>Soumaprit Paul</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     
     <style>
         *, *::before, *::after { box-sizing: border-box; }
@@ -78,15 +79,19 @@
         .product-name { font-size: 14px; font-weight: 600; color: #ffffff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
         .product-actions { display: flex; flex-direction: column; gap: 8px; border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 8px; }
-        .create-btn { width: 100%; padding: 8px 0; background-color: #1877F2; color: #fff; border: none; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer; text-align: center; text-decoration: none; display: inline-block; }
-        .create-btn:hover { background-color: #115ec9; }
-        .action-buttons-left { display: flex; justify-content: space-between; align-items: center; gap: 5px; }
-        .action-btn { background-color: rgba(255, 255, 255, 0.08); color: #fff; padding: 6px 0; flex: 1; border-radius: 6px; font-size: 12px; border: 1px solid rgba(255, 255, 255, 0.05); display: flex; align-items: center; justify-content: center; gap: 4px; cursor: pointer; }
-        .action-btn.share-btn { background-color: rgba(255, 255, 255, 0.15); }
+        
+        /* Updated Stats Layout (Single Line Row) */
+        .stats-share-row { display: flex; justify-content: space-between; align-items: center; gap: 5px; width: 100%; }
+        .stat-item { font-size: 11px; color: #aaaaaa; display: flex; align-items: center; gap: 4px; }
+        
+        .action-btn { background-color: rgba(255, 255, 255, 0.08); color: #fff; padding: 6px 8px; border-radius: 6px; font-size: 11px; border: 1px solid rgba(255, 255, 255, 0.05); display: flex; align-items: center; justify-content: center; gap: 4px; cursor: pointer; }
+        .action-btn.share-btn { background-color: rgba(255, 255, 255, 0.12); }
         .action-btn.like-btn i { color: #ff4d4d; }
         .action-btn:hover { background-color: rgba(255, 255, 255, 0.2); }
-        .view-count { font-size: 11px; color: #aaaaaa; display: flex; align-items: center; justify-content: flex-end; gap: 4px; padding-right: 2px; }
 
+        /* New Prominent Download Button Below Stats */
+        .download-btn { width: 100%; padding: 8px 0; background-color: #25D366; color: #fff; border: none; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer; text-align: center; text-decoration: none; display: inline-block; transition: background-color 0.2s ease; }
+        .download-btn:hover { background-color: #1ebd59; }
 
         /* --- Admin System Styles --- */
         .modal-overlay {
@@ -142,6 +147,28 @@
         .adm-btn { padding: 6px 12px; border: none; border-radius: 4px; font-size: 12px; font-weight: bold; cursor: pointer; color: white; }
         .adm-btn-edit { background: #f39c12; }
         .adm-btn-del { background: #e74c3c; }
+
+        /* --- Mobile Responsiveness --- */
+        @media (max-width: 480px) {
+            body { padding: 20px 10px; }
+            .container { margin-top: 10px; }
+            .profile-img { width: 90px; height: 90px; }
+            .name { font-size: 20px; }
+            .bio { font-size: 14px; }
+            .social-icons { gap: 15px; }
+            .social-icons a { font-size: 24px; }
+            
+            .links-container { gap: 8px; }
+            .product-wrapper { padding: 6px; }
+            .product-image-container img { height: 100px; }
+            .product-name { font-size: 13px; }
+            .action-btn { padding: 5px; font-size: 10px; }
+            .download-btn { font-size: 11px; padding: 8px 0; }
+            
+            .admin-toggle-link { top: 10px; right: 10px; width: 35px; height: 35px; font-size: 14px; }
+            .admin-header h2 { font-size: 16px; }
+            .close-admin-btn { padding: 5px 10px; font-size: 12px; }
+        }
 
     </style>
 </head>
@@ -215,12 +242,12 @@
                     </select>
                 </div>
                 <div class="form-group" id="price-group" style="display: none;">
-                    <label>Price (e.g. ₹99)</label>
-                    <input type="text" id="prod-price" placeholder="Enter amount">
+                    <label>Price (e.g. 99)</label>
+                    <input type="text" id="prod-price" placeholder="Enter amount (without currency symbol)">
                 </div>
                 <div class="form-group">
-                    <label>View Link (Redirect URL)</label>
-                    <input type="text" id="prod-link" placeholder="Enter product link" required>
+                    <label>Download Link (URL)</label>
+                    <input type="text" id="prod-link" placeholder="Enter product download link" required>
                 </div>
                 <button class="admin-btn-submit" onclick="saveProduct()">Save Product</button>
             </div>
@@ -254,10 +281,10 @@
         const publicContainer = document.getElementById('public-links-container');
         const adminListContainer = document.getElementById('admin-product-list');
 
-        const ADMIN_PASSWORD = "admin"; // <--- পাসওয়ার্ড এখানে
+        const ADMIN_PASSWORD = "1019"; 
         let isAdminLoggedIn = false;
 
-        // Fetch & Show Products (Both Public & Admin Views)
+        // Fetch & Show Products
         onSnapshot(collection(db, "products"), (snapshot) => {
             publicContainer.innerHTML = ""; 
             adminListContainer.innerHTML = ""; 
@@ -272,12 +299,15 @@
                 
                 const isPaid = data.type === 'paid';
                 const tagClass = isPaid ? 'price-badge paid-tag' : 'price-badge';
-                const tagLabel = isPaid ? (data.price || 'Paid') : 'Free';
+                const tagLabel = isPaid ? ('₹' + (data.price || '0')) : 'Free';
+                const buttonText = isPaid ? `Pay ₹${data.price || '0'} & Download` : 'Download Now';
+                
+                const downloadTargetLink = data.downloadLink || data.openLink || '#';
 
                 // ================= PUBLIC GRID CARD =================
                 publicContainer.innerHTML += `
                 <div class="product-wrapper">
-                    <div class="product-image-container" onclick="viewProduct('${docId}', '${data.openLink || '#'}')">
+                    <div class="product-image-container" onclick="handleDownload(event, '${docId}', '${downloadTargetLink}', '${data.type}', '${data.price}', '${data.name}')">
                         <span class="${tagClass}">${tagLabel}</span>
                         <img src="${data.image || 'https://via.placeholder.com/200x120'}" alt="Product">
                     </div>
@@ -287,30 +317,30 @@
                     </div>
                     
                     <div class="product-actions">
-                        <a href="${data.openLink || '#'}" target="_blank" onclick="trackView('${docId}')" class="create-btn">
-                            Create Yours
-                        </a>
-
-                        <div class="action-buttons-left">
-                            <button class="action-btn share-btn" onclick="shareProduct('${data.name}', '${data.openLink}')" title="Share">
-                                <i class="fas fa-share"></i>
-                            </button>
+                        <div class="stats-share-row">
+                            <span class="stat-item" title="Views">
+                                <i class="fas fa-eye"></i> ${data.views || 0}
+                            </span>
+                            
                             <button class="action-btn like-btn" onclick="likeProduct('${docId}')" title="Like">
                                 <i class="fas fa-heart"></i> <span>${data.likes || 0}</span>
                             </button>
+                            
+                            <button class="action-btn share-btn" onclick="shareProduct('${data.name}', '${downloadTargetLink}')" title="Share">
+                                <i class="fas fa-share"></i>
+                            </button>
                         </div>
-                        
-                        <div class="view-count">
-                            <i class="fas fa-eye"></i> ${data.views || 0}
-                        </div>
+
+                        <button onclick="handleDownload(event, '${docId}', '${downloadTargetLink}', '${data.type}', '${data.price}', '${data.name}')" class="download-btn">
+                            <i class="fas fa-download"></i> ${buttonText}
+                        </button>
                     </div>
                 </div>`;
 
                 // ================= ADMIN LIST ITEM =================
-                // Using template literal properly inside JS for the edit function parameters
                 const safeName = (data.name || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
                 const safeImg = (data.image || '').replace(/'/g, "\\'");
-                const safeLink = (data.openLink || '').replace(/'/g, "\\'");
+                const safeLink = downloadTargetLink.replace(/'/g, "\\'");
                 const safeType = data.type || 'free';
                 const safePrice = (data.price || '').replace(/'/g, "\\'");
 
@@ -328,7 +358,51 @@
             });
         });
 
-        // --- Admin Authentication & Dashboard Toggle ---
+        // --- Razorpay & Download Handling Logic ---
+        window.handleDownload = function(event, docId, downloadLink, type, price, name) {
+            event.preventDefault();
+            
+            if (type === 'paid') {
+                let numericPrice = parseFloat((price || '').toString().replace(/[^0-9.]/g, ''));
+                if (isNaN(numericPrice) || numericPrice <= 0) {
+                    alert("Invalid product price configuration.");
+                    return;
+                }
+                
+                var options = {
+                    "key": "rzp_live_T7J363fWL1dhsc", // Your Live Razorpay Key
+                    "amount": Math.round(numericPrice * 100), // Conversion to paise (1 INR = 100 paise)
+                    "currency": "INR",
+                    "name": "Soumaprit Paul",
+                    "description": "Download: " + (name || "Premium File"),
+                    "handler": function (response) {
+                        alert("Payment successful! আপনার ফাইলটি ডাউনলোড শুরু হচ্ছে।");
+                        if(downloadLink && downloadLink !== '#') {
+                            window.open(downloadLink, '_blank');
+                        }
+                        trackView(docId); 
+                    },
+                    "theme": {
+                        "color": "#25D366"
+                    }
+                };
+                
+                var rzp1 = new Razorpay(options);
+                rzp1.on('payment.failed', function (response){
+                    alert("Payment failed! পেমেন্ট সম্পূর্ণ না হলে ফাইলটি ডাউনলোড করা যাবে না।");
+                });
+                rzp1.open();
+                
+            } else {
+                // Free Product logic
+                if(downloadLink && downloadLink !== '#') {
+                    window.open(downloadLink, '_blank');
+                }
+                trackView(docId);
+            }
+        };
+
+        // --- Admin Authentication ---
         window.openLoginModal = () => {
             if (isAdminLoggedIn) {
                 document.getElementById('admin-dashboard').style.display = 'flex';
@@ -350,7 +424,7 @@
                 document.getElementById('lock-icon').className = "fas fa-lock-open";
                 closeLoginModal();
                 document.getElementById('admin-dashboard').style.display = 'flex';
-                switchTab('list'); // Open Product List by default upon login
+                switchTab('list');
             } else {
                 alert("Incorrect Password!");
             }
@@ -363,10 +437,8 @@
         window.logoutAdmin = () => {
             document.getElementById('admin-dashboard').style.display = 'none';
             resetForm();
-            // isAdminLoggedIn = false; // Uncomment if you want them to type password again every time they close
         };
 
-        // --- Dashboard Tabs Logic ---
         window.switchTab = (tabId) => {
             document.getElementById('tab-add').classList.remove('active');
             document.getElementById('tab-list').classList.remove('active');
@@ -382,12 +454,12 @@
             }
         };
 
-        // --- Add/Edit Form Logic ---
         window.handleTypeChange = () => {
             const type = document.getElementById('prod-type').value;
             document.getElementById('price-group').style.display = (type === 'paid') ? 'flex' : 'none';
         };
 
+        // --- Save / Edit Logic ---
         window.saveProduct = async () => {
             if (!isAdminLoggedIn) return;
 
@@ -396,15 +468,16 @@
             const name = document.getElementById('prod-name').value;
             const type = document.getElementById('prod-type').value;
             const price = document.getElementById('prod-price').value;
-            const openLink = document.getElementById('prod-link').value;
+            const downloadLink = document.getElementById('prod-link').value;
             
-            if(!name || !image || !openLink) {
-                alert("Image URL, Name, and View Link are mandatory!");
+            if(!name || !image || !downloadLink) {
+                alert("Image URL, Name, and Download Link are mandatory!");
                 return;
             }
 
             const productData = {
-                image: image, name: name, type: type, openLink: openLink,
+                image: image, name: name, type: type, 
+                downloadLink: downloadLink, openLink: downloadLink, 
                 price: type === 'paid' ? price : ''
             };
 
@@ -419,27 +492,27 @@
                     alert("New product added!");
                 }
                 resetForm();
-                switchTab('list'); // Take them back to list view to see the result
+                switchTab('list');
             } catch (e) {
                 alert("Error: " + e.message);
             }
         };
 
-        window.editProduct = (id, name, image, openLink, type, price) => {
+        window.editProduct = (id, name, image, downloadLink, type, price) => {
             if (!isAdminLoggedIn) return;
-            switchTab('add'); // Go to Add/Edit tab
+            switchTab('add');
             
             document.getElementById('form-title').innerText = "Edit Product";
             document.getElementById('product-id').value = id;
             document.getElementById('prod-image').value = image;
-            // Decode HTML entities if quotes were saved
+            
             const textarea = document.createElement("textarea");
             textarea.innerHTML = name;
             document.getElementById('prod-name').value = textarea.value;
             
             document.getElementById('prod-type').value = type || 'free';
             document.getElementById('prod-price').value = price || '';
-            document.getElementById('prod-link').value = openLink;
+            document.getElementById('prod-link').value = downloadLink;
             handleTypeChange();
         };
 
@@ -463,12 +536,7 @@
             handleTypeChange();
         }
 
-        // --- Public Interaction Logic ---
-        window.viewProduct = async (id, url) => {
-            if(url && url !== '#') { window.open(url, '_blank'); }
-            await trackView(id);
-        };
-
+        // --- Interactions ---
         window.trackView = async (id) => {
             try { await updateDoc(doc(db, "products", id), { views: increment(1) }); } catch (e) {}
         };
@@ -480,7 +548,7 @@
         window.shareProduct = async (title, url) => {
             const shareUrl = (url && url !== '#') ? url : window.location.href; 
             if (navigator.share) {
-                navigator.share({ title: title, text: 'Check this out!', url: shareUrl }).catch(e => {});
+                navigator.share({ title: title, text: 'Check out this file!', url: shareUrl }).catch(e => {});
             } else {
                 navigator.clipboard.writeText(shareUrl).then(() => alert("Link copied to clipboard!"));
             }
