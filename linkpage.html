@@ -188,7 +188,9 @@
         </div>
 
         <!-- Product Cards Area -->
-        <div class="product-list" id="productList"></div>
+        <div class="product-list" id="productList">
+            <p style="color: #aaa; font-size: 14px;">Loading products...</p>
+        </div>
     </div>
 
     <!-- Password Modal -->
@@ -207,7 +209,7 @@
             <span class="modal-close" onclick="closeAdminModal()">&times;</span>
             <h3 id="formTitle">Add Product</h3>
             
-            <input type="hidden" id="editIndex" value="-1">
+            <input type="hidden" id="editDocId" value="">
             
             <input type="text" id="prodName" class="modal-input" placeholder="Product Name">
             <input type="url" id="prodLink" class="modal-input" placeholder="Product / Webpage Link">
@@ -218,21 +220,35 @@
         </div>
     </div>
 
-    <script>
+    <!-- Firebase System Integration -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+        import { getFirestore, collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+
+        // Firebase Config
+        const firebaseConfig = {
+            apiKey: "AIzaSyD-FPX1xPTQ8NTER4nFJH0jSTRmRB_K0FE",
+            authDomain: "weblinkcenter-db120.firebaseapp.com",
+            projectId: "weblinkcenter-db120",
+            storageBucket: "weblinkcenter-db120.firebasestorage.app",
+            messagingSenderId: "394449406925",
+            appId: "1:394449406925:web:4ec45b9894ad4640361284"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
         const ADMIN_PASS = "1019";
-        let products = JSON.parse(localStorage.getItem('myProducts')) || [];
+        let products = [];
 
-        function goBack() {
+        window.goBack = function() {
             window.history.back();
-        }
+        };
 
-        // Product Specific Share Function
-        function shareLink(name, url) {
+        // Share Function
+        window.shareLink = function(name, url) {
             if (navigator.share) {
-                navigator.share({
-                    title: name,
-                    url: url
-                }).catch(err => console.log('Error sharing:', err));
+                navigator.share({ title: name, url: url }).catch(err => console.log('Error sharing:', err));
             } else {
                 navigator.clipboard.writeText(url).then(() => {
                     alert('Product link copied to clipboard!');
@@ -240,27 +256,41 @@
                     alert('Failed to copy link.');
                 });
             }
-        }
+        };
 
-        function renderProducts() {
+        // Real-Time Firebase Listener
+        onSnapshot(collection(db, "custom_products"), (snapshot) => {
             const list = document.getElementById('productList');
             const adminList = document.getElementById('adminProductList');
             list.innerHTML = '';
             adminList.innerHTML = '';
+            products = [];
 
-            products.forEach((prod, index) => {
-                // Public View Rendering with Share Button
+            if (snapshot.empty) {
+                list.innerHTML = '<p style="color: #aaa; font-size: 14px;">No products found.</p>';
+            }
+
+            snapshot.forEach((documentSnapshot) => {
+                const data = documentSnapshot.data();
+                const docId = documentSnapshot.id;
+                
+                products.push({ id: docId, ...data });
+
+                const safeName = (data.name || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+                const safeLink = (data.link || '').replace(/'/g, "\\'");
+
+                // Public View Rendering
                 const card = document.createElement('div');
                 card.className = 'product-card';
                 card.innerHTML = `
                     <div class="preview-box">
-                        <iframe src="${prod.link}" title="preview"></iframe>
+                        <iframe src="${data.link || '#'}" title="preview"></iframe>
                     </div>
                     <div class="product-info">
-                        <div class="product-name">${prod.name}</div>
+                        <div class="product-name">${data.name || 'No Name'}</div>
                         <div class="btn-group">
-                            <a href="${prod.link}" class="product-btn" target="_blank">View Project</a>
-                            <button class="share-btn" onclick="shareLink('${prod.name.replace(/'/g, "\\'")}', '${prod.link}')" title="Share Product Link">
+                            <a href="${data.link || '#'}" class="product-btn" target="_blank">View Project</a>
+                            <button class="share-btn" onclick="shareLink('${safeName}', '${safeLink}')" title="Share Product Link">
                                 <i class="fas fa-share-alt"></i>
                             </button>
                         </div>
@@ -272,21 +302,21 @@
                 const adminItem = document.createElement('div');
                 adminItem.className = 'admin-item';
                 adminItem.innerHTML = `
-                    <span>${prod.name}</span>
+                    <span>${data.name || 'No Name'}</span>
                     <div class="admin-item-actions">
-                        <button class="action-btn edit-btn" onclick="editProduct(${index})" title="Edit"><i class="fas fa-edit"></i></button>
-                        <button class="action-btn delete-btn" onclick="deleteProduct(${index})" title="Delete"><i class="fas fa-trash"></i></button>
+                        <button class="action-btn edit-btn" onclick="editProduct('${docId}', '${safeName}', '${safeLink}')" title="Edit"><i class="fas fa-edit"></i></button>
+                        <button class="action-btn delete-btn" onclick="deleteProduct('${docId}')" title="Delete"><i class="fas fa-trash"></i></button>
                     </div>
                 `;
                 adminList.appendChild(adminItem);
             });
-        }
+        });
 
         // Modal Controls
-        function openLoginModal() { document.getElementById('loginModal').style.display = 'flex'; }
-        function closeLoginModal() { document.getElementById('loginModal').style.display = 'none'; }
+        window.openLoginModal = function() { document.getElementById('loginModal').style.display = 'flex'; };
+        window.closeLoginModal = function() { document.getElementById('loginModal').style.display = 'none'; };
         
-        function verifyPassword() {
+        window.verifyPassword = function() {
             const pass = document.getElementById('adminPassword').value;
             if (pass === ADMIN_PASS) {
                 closeLoginModal();
@@ -295,65 +325,68 @@
             } else {
                 alert('Wrong Password!');
             }
-        }
+        };
 
-        function closeAdminModal() { 
+        window.closeAdminModal = function() { 
             document.getElementById('adminModal').style.display = 'none'; 
             resetForm();
-        }
+        };
 
-        // Save / Add / Update Product
-        function saveProduct() {
+        // Save / Add / Update Product in Firebase
+        window.saveProduct = async function() {
             const name = document.getElementById('prodName').value.trim();
             const link = document.getElementById('prodLink').value.trim();
-            const editIndex = parseInt(document.getElementById('editIndex').value);
+            const editDocId = document.getElementById('editDocId').value;
 
             if (name && link) {
-                if (editIndex === -1) {
-                    products.push({ name, link });
-                } else {
-                    products[editIndex] = { name, link };
+                try {
+                    if (!editDocId) {
+                        // Add New Product
+                        await addDoc(collection(db, "custom_products"), { name, link });
+                    } else {
+                        // Update Existing Product
+                        await updateDoc(doc(db, "custom_products", editDocId), { name, link });
+                    }
+                    resetForm();
+                } catch (e) {
+                    alert("Error saving: " + e.message);
                 }
-                localStorage.setItem('myProducts', JSON.stringify(products));
-                resetForm();
-                renderProducts();
             } else {
                 alert('Please enter both name and link.');
             }
-        }
+        };
 
         // Populate fields for Editing
-        function editProduct(index) {
+        window.editProduct = function(docId, name, link) {
             document.getElementById('formTitle').innerText = "Edit Product";
-            document.getElementById('prodName').value = products[index].name;
-            document.getElementById('prodLink').value = products[index].link;
-            document.getElementById('editIndex').value = index;
+            document.getElementById('prodName').value = name;
+            document.getElementById('prodLink').value = link;
+            document.getElementById('editDocId').value = docId;
             document.getElementById('saveBtn').innerText = "Update Product";
             document.getElementById('saveBtn').style.background = "#ffc107";
             document.getElementById('saveBtn').style.color = "#000";
-        }
+        };
 
-        function resetForm() {
+        window.resetForm = function() {
             document.getElementById('formTitle').innerText = "Add Product";
             document.getElementById('prodName').value = '';
             document.getElementById('prodLink').value = '';
-            document.getElementById('editIndex').value = "-1";
+            document.getElementById('editDocId').value = "";
             document.getElementById('saveBtn').innerText = "Add Product";
             document.getElementById('saveBtn').style.background = "#28a745";
             document.getElementById('saveBtn').style.color = "#fff";
-        }
+        };
 
-        function deleteProduct(index) {
+        window.deleteProduct = async function(docId) {
             if(confirm("Are you sure you want to delete this product?")) {
-                products.splice(index, 1);
-                localStorage.setItem('myProducts', JSON.stringify(products));
-                resetForm();
-                renderProducts();
+                try {
+                    await deleteDoc(doc(db, "custom_products", docId));
+                    resetForm();
+                } catch(e) {
+                    alert("Error deleting: " + e.message);
+                }
             }
-        }
-
-        // Initial Load
-        renderProducts();
+        };
     </script>
 </body>
 </html>
